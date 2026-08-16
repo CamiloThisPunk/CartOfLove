@@ -175,6 +175,11 @@ function openEnvelope() {
     isOpened = true;
     localStorage.setItem(CONFIG.storageKeyOpened, 'true');
 
+    // Reproducir música automáticamente al abrir (el navegador lo permite porque el usuario acaba de hacer clic)
+    if (!musicPlaying) {
+        toggleMusic();
+    }
+
     // Open the envelope flap
     els.envelope.classList.add('opened');
     els.tapHint.style.display = 'none';

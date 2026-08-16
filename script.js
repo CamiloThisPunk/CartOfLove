@@ -33,6 +33,7 @@ const els = {
     btnMusic: $('#btnMusic'),
     btnHeart: $('#btnHeart'),
     btnFireworks: $('#btnFireworks'),
+    btnShare: $('#btnShare'),
     foreverBadge: $('#foreverBadge'),
     bgMusic: $('#bgMusic'),
 };
@@ -412,6 +413,56 @@ function setupActions() {
     });
 
     els.btnFireworks.addEventListener('click', launchFireworks);
+    els.btnShare.addEventListener('click', captureAndShare);
+}
+
+// Share function
+async function captureAndShare() {
+    const card = document.getElementById('letterCard');
+    if (!card) return;
+    
+    // Indicador de carga
+    const originalText = els.btnShare.innerHTML;
+    els.btnShare.innerHTML = '<span class="btn-icon">⏳</span><span class="btn-label">Generando...</span>';
+    
+    try {
+        const canvas = await html2canvas(card, {
+            scale: 2, // Mejor resolución
+            useCORS: true, 
+            backgroundColor: '#fff0f5' // Fondo rosado claro para la captura
+        });
+        
+        canvas.toBlob(async (blob) => {
+            const file = new File([blob], 'nuestra-carta.png', { type: 'image/png' });
+            
+            // Intenta compartir nativamente si el dispositivo lo soporta (móviles)
+            if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+                try {
+                    await navigator.share({
+                        files: [file],
+                        title: 'Nuestra Carta de Amor',
+                        text: '❤️ ¡Mira la carta que acabo de leer!'
+                    });
+                } catch (err) {
+                    console.log('Error o usuario canceló al compartir', err);
+                }
+            } else {
+                // Si está en PC, descargamos la imagen automáticamente
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'nuestra-carta.png';
+                a.click();
+                URL.revokeObjectURL(url);
+                alert("🖼️ ¡Imagen descargada con éxito!\n\nComo estás en PC, la imagen se guardó en tus Descargas. Ahora puedes enviarla por WhatsApp Web a quien quieras.");
+            }
+            els.btnShare.innerHTML = originalText;
+        }, 'image/png');
+    } catch (e) {
+        console.error("Error al capturar: ", e);
+        els.btnShare.innerHTML = originalText;
+        alert("Lo siento, hubo un error al generar la captura.");
+    }
 }
 
 // Music toggle

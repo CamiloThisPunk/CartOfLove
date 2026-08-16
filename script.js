@@ -432,8 +432,19 @@ async function captureAndShare() {
             backgroundColor: '#fff0f5' // Fondo rosado claro para la captura
         });
         
+        // Función auxiliar para descargar la imagen
+        const descargarImagen = (blob) => {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'nuestra-carta.jpg';
+            a.click();
+            URL.revokeObjectURL(url);
+            alert("🖼️ ¡Imagen descargada con éxito en tu PC!\n\nAhora puedes enviarla por WhatsApp Web a quien quieras.");
+        };
+
         canvas.toBlob(async (blob) => {
-            const file = new File([blob], 'nuestra-carta.png', { type: 'image/png' });
+            const file = new File([blob], 'nuestra-carta.jpg', { type: 'image/jpeg' });
             
             // Intenta compartir nativamente si el dispositivo lo soporta (móviles)
             if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
@@ -444,20 +455,15 @@ async function captureAndShare() {
                         text: '❤️ ¡Mira la carta que acabo de leer!'
                     });
                 } catch (err) {
-                    console.log('Error o usuario canceló al compartir', err);
+                    console.log('Error compartiendo o usuario canceló. Forzando descarga.', err);
+                    descargarImagen(blob); // Fallback si falla el share nativo
                 }
             } else {
                 // Si está en PC, descargamos la imagen automáticamente
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'nuestra-carta.png';
-                a.click();
-                URL.revokeObjectURL(url);
-                alert("🖼️ ¡Imagen descargada con éxito!\n\nComo estás en PC, la imagen se guardó en tus Descargas. Ahora puedes enviarla por WhatsApp Web a quien quieras.");
+                descargarImagen(blob);
             }
             els.btnShare.innerHTML = originalText;
-        }, 'image/png');
+        }, 'image/jpeg', 0.95);
     } catch (e) {
         console.error("Error al capturar: ", e);
         els.btnShare.innerHTML = originalText;

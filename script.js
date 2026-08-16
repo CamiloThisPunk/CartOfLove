@@ -1,10 +1,8 @@
 // ===== CONFIGURATION =====
 const CONFIG = {
     recipientName: 'Carla Daniela',
-    // waitHours: 24, // Hours to wait before envelope can be opened
-    waitSeconds: 120, // Seconds to wait before envelope can be opened
-    storageKeyCreated: 'cartOfLove_created_v3',
-    storageKeyOpened: 'cartOfLove_opened_v3',
+    unlockDate: new Date('2026-08-16T11:30:00-04:00'), // 11:30 AM Hora de Bolivia (UTC-4)
+    storageKeyOpened: 'cartOfLove_opened_final3',
 };
 
 // ===== DOM ELEMENTS =====
@@ -65,15 +63,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ===== STATE INITIALIZATION =====
 function initState() {
-    // Check creation time
-    const storedCreated = localStorage.getItem(CONFIG.storageKeyCreated);
-    if (storedCreated) {
-        createdAt = new Date(parseInt(storedCreated));
-    } else {
-        createdAt = new Date();
-        localStorage.setItem(CONFIG.storageKeyCreated, createdAt.getTime().toString());
-    }
-
     // Check if already opened
     isOpened = localStorage.getItem(CONFIG.storageKeyOpened) === 'true';
 }
@@ -82,8 +71,7 @@ function initState() {
 
 // HORA
 function getUnlockTime() {
-    // return new Date(createdAt.getTime() + CONFIG.waitHours * 60 * 60 * 1000);
-    return new Date(createdAt.getTime() + CONFIG.waitSeconds * 1000);
+    return CONFIG.unlockDate;
 }
 
 function startWaitCountdown() {
@@ -109,12 +97,10 @@ function updateWaitCountdown() {
 
     els.waitCountdown.textContent = `${pad(hours)}h ${pad(minutes)}m ${pad(seconds)}s`;
 
-    // HORA
-    // Update progress bar (fills up as time passes)
-    // const total = CONFIG.waitHours * 60 * 60 * 1000;
-    const total = CONFIG.waitSeconds * 1000;
-    const elapsed = total - diff;
-    const progress = Math.min(100, (elapsed / total) * 100);
+    // Asumimos un total de 24 horas para la barra de progreso
+    const total = 24 * 60 * 60 * 1000;
+    const elapsed = total - Math.min(diff, total);
+    const progress = (elapsed / total) * 100;
     els.waitProgressBar.style.width = `${progress}%`;
 }
 

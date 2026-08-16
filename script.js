@@ -30,11 +30,11 @@ const els = {
     letterDate: $('#letterDate'),
     letterBody: $('#letterBody'),
     actionsBar: $('#actionsBar'),
-    btnMusic: $('#btnMusic'),
-    btnHeart: $('#btnHeart'),
-    btnFireworks: $('#btnFireworks'),
-    foreverBadge: $('#foreverBadge'),
-    bgMusic: $('#bgMusic'),
+    btnMusic: document.getElementById('btnMusic'),
+    btnHeart: document.getElementById('btnHeart'),
+    btnFireworks: document.getElementById('btnFireworks'),
+    foreverBadge: document.getElementById('foreverBadge'),
+    bgMusic: document.getElementById('bgMusic')
 };
 
 // ===== STATE =====
@@ -419,37 +419,16 @@ let musicPlaying = false;
 
 function toggleMusic() {
     if (musicPlaying) {
-        if (typeof ytPlayer !== 'undefined' && ytPlayer.pauseVideo) {
-            ytPlayer.pauseVideo();
-        }
+        els.bgMusic.pause();
         els.btnMusic.classList.remove('playing');
         els.btnMusic.querySelector('.btn-label').textContent = 'Música';
     } else {
-        if (typeof ytPlayer !== 'undefined' && ytPlayer.playVideo) {
-            ytPlayer.setVolume(50);
-            ytPlayer.playVideo();
-        }
+        els.bgMusic.volume = 0.4; // Ajusta el volumen aquí si es necesario
+        els.bgMusic.play().catch(e => console.log("Autoplay bloqueado:", e));
         els.btnMusic.classList.add('playing');
         els.btnMusic.querySelector('.btn-label').textContent = 'Pausar';
     }
     musicPlaying = !musicPlaying;
-}
-
-// ===== YOUTUBE BACKGROUND MUSIC =====
-let ytPlayer;
-function onYouTubeIframeAPIReady() {
-    ytPlayer = new YT.Player('youtubePlayer', {
-        height: '0',
-        width: '0',
-        videoId: 'n5gtmYh9TbE', // Video solicitado por el usuario
-        playerVars: {
-            'autoplay': 0,
-            'controls': 0,
-            'loop': 1,
-            'playlist': 'n5gtmYh9TbE', // Necesario para que el loop funcione
-            'playsinline': 1
-        }
-    });
 }
 
 // Heart Burst

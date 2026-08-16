@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>💌 Una Carta Especial Para Ti</title>
+    <meta name="description" content="Una carta de amor y cariño especial, hecha con todo el corazón.">
+    <meta name="theme-color" content="#1a0011">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&family=Outfit:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Particles Canvas -->
+    <canvas id="particles"></canvas>
+
+    <!-- Floating Hearts Background -->
+    <div class="floating-hearts" id="floatingHearts"></div>
+
+    <!-- Stars Background -->
+    <div class="stars" id="stars"></div>
+
+    <!-- Main Scene -->
+    <div class="scene" id="scene">
+
+        <!-- PHASE 1: Envelope with Wait Timer -->
+        <div class="envelope-wrapper" id="envelopeWrapper">
+            <div class="envelope-glow"></div>
+
+            <!-- Wait Timer (shown above envelope while counting down) -->
+            <div class="wait-timer" id="waitTimer">
+                <div class="wait-timer-glow"></div>
+                <div class="wait-timer-content">
+                    <div class="wait-timer-icon">⏳</div>
+                    <div class="wait-timer-info">
+                        <span class="wait-timer-label">Podrás abrir esta carta en</span>
+                        <span class="wait-timer-countdown" id="waitCountdown">24h 00m 00s</span>
+                    </div>
+                </div>
+                <div class="wait-timer-progress">
+                    <div class="wait-timer-progress-bar" id="waitProgressBar"></div>
+                </div>
+            </div>
+
+            <div class="envelope" id="envelope">
+                <div class="envelope-top"></div>
+                <div class="envelope-body">
+                    <div class="envelope-seal">
+                        <span class="seal-heart">💌</span>
+                    </div>
+                    <p class="envelope-label">Para: <span class="recipient-name">Carla Daniela</span></p>
+                </div>
+                <div class="envelope-shadow"></div>
+            </div>
+
+            <!-- Lock indicator (when waiting) -->
+            <div class="lock-indicator" id="lockIndicator">
+                <span class="lock-icon">🔒</span>
+                <span class="lock-text">Aún no es el momento...</span>
+            </div>
+
+            <!-- Tap hint (when ready) -->
+            <p class="tap-hint" id="tapHint" style="display: none;">
+                <span class="hint-icon">✨</span> Toca el sobre para abrirlo <span class="hint-icon">✨</span>
+            </p>
+        </div>
+
+        <!-- PHASE 2: Letter (permanent once opened) -->
+        <div class="letter-container" id="letterContainer">
+
+            <!-- Letter Card -->
+            <div class="letter-card" id="letterCard">
+                <div class="letter-decoration-top">
+                    <div class="deco-line"></div>
+                    <div class="deco-heart">♥</div>
+                    <div class="deco-line"></div>
+                </div>
+
+                <div class="letter-header">
+                    <h1 class="letter-title" id="letterTitle">Para mi amada</h1>
+                    <h2 class="letter-name" id="letterName">Carla Daniela</h2>
+                    <div class="letter-date" id="letterDate"></div>
+                </div>
+
+                <div class="letter-body" id="letterBody">
+
+                    <!-- Imagen con marco y protección -->
+                    <div class="photo-frame-container fade-in-text" data-delay="0">
+                        <div class="photo-overlay-protection"></div>
+                        <img src="" alt="Amada" class="letter-photo no-select">
+                    </div>
+
+                    <!-- Texto más corto y puntual -->
+                    <p class="letter-paragraph fade-in-text" data-delay="1">
+                        Llegaste a mi vida y la transformaste por completo. Gracias por cada risa compartida, por cada
+                        palabra sincero y por ser ese lugar seguro donde puedo ser yo, sin filtros. 🌸
+                    </p>
+
+                    <p class="letter-paragraph fade-in-text" data-delay="2">
+                        Lo que siento por ti no tiene caducidad. Quiero que sepas que <em>siempre</em> vas a tener el
+                        lugar más especial en mi corazón. Nunca cambies esa hermosa sonrisa que lo ilumina todo. ✨
+                    </p>
+                </div>
+
+                <div class="letter-footer">
+                    <p class="letter-signature fade-in-text" data-delay="5">Con todo mi cariño,</p>
+                    <p class="letter-signed fade-in-text" data-delay="5.5">Tu novio Camilo que te ama mucho 💝. XD </p>
+                </div>
+
+                <div class="letter-decoration-bottom">
+                    <div class="deco-line"></div>
+                    <div class="deco-flower">🌺</div>
+                    <div class="deco-line"></div>
+                </div>
+            </div>
+
+            <!-- Interactive Actions -->
+            <div class="actions-bar" id="actionsBar">
+                <button class="action-btn" id="btnMusic" title="Música">
+                    <span class="btn-icon">🎵</span>
+                    <span class="btn-label">Música</span>
+                </button>
+                <button class="action-btn heart-btn" id="btnHeart" title="Enviar Corazón">
+                    <span class="btn-icon">💖</span>
+                    <span class="btn-label">Enviar ♥</span>
+                </button>
+                <button class="action-btn" id="btnFireworks" title="Fuegos Artificiales">
+                    <span class="btn-icon">🎆</span>
+                    <span class="btn-label">Celebrar</span>
+                </button>
+            </div>
+
+            <!-- Permanent message -->
+            <div class="forever-badge" id="foreverBadge">
+                <span>💕</span> Esta carta es para siempre <span>💕</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio -->
+    <audio id="bgMusic" loop preload="auto">
+        <source src="https://cdn.pixabay.com/audio/2022/10/18/audio_af308b87d5.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- YouTube Hidden Player for Background Music -->
+    <div id="youtubePlayer" style="display:none;"></div>
+    <script src="https://www.youtube.com/iframe_api"></script>
+
+    <script src="secure-data.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

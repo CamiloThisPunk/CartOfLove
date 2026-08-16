@@ -438,9 +438,12 @@ async function captureAndShare() {
             const a = document.createElement('a');
             a.href = url;
             a.download = 'nuestra-carta.jpg';
+            a.style.display = 'none';
+            document.body.appendChild(a); // Requerido para que funcione en móviles y Firefox
             a.click();
+            document.body.removeChild(a);
             URL.revokeObjectURL(url);
-            alert("🖼️ ¡Imagen descargada con éxito en tu PC!\n\nAhora puedes enviarla por WhatsApp Web a quien quieras.");
+            alert("🖼️ ¡Imagen generada con éxito!\n\nSi estás en celular y no se compartió automáticamente, revisa tu carpeta de Descargas o tu Galería.");
         };
 
         canvas.toBlob(async (blob) => {

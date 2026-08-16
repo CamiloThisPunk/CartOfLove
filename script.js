@@ -33,7 +33,6 @@ const els = {
     btnMusic: $('#btnMusic'),
     btnHeart: $('#btnHeart'),
     btnFireworks: $('#btnFireworks'),
-    btnShare: $('#btnShare'),
     foreverBadge: $('#foreverBadge'),
     bgMusic: $('#bgMusic'),
 };
@@ -413,65 +412,6 @@ function setupActions() {
     });
 
     els.btnFireworks.addEventListener('click', launchFireworks);
-    els.btnShare.addEventListener('click', captureAndShare);
-}
-
-// Share function
-async function captureAndShare() {
-    const card = document.getElementById('letterCard');
-    if (!card) return;
-    
-    // Indicador de carga
-    const originalText = els.btnShare.innerHTML;
-    els.btnShare.innerHTML = '<span class="btn-icon">⏳</span><span class="btn-label">Generando...</span>';
-    
-    try {
-        const canvas = await html2canvas(card, {
-            scale: 2, // Mejor resolución
-            useCORS: true, 
-            backgroundColor: '#fff0f5' // Fondo rosado claro para la captura
-        });
-        
-        // Función auxiliar para descargar la imagen
-        const descargarImagen = (blob) => {
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'nuestra-carta.jpg';
-            a.style.display = 'none';
-            document.body.appendChild(a); // Requerido para que funcione en móviles y Firefox
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            alert("🖼️ ¡Imagen generada con éxito!\n\nSi estás en celular y no se compartió automáticamente, revisa tu carpeta de Descargas o tu Galería.");
-        };
-
-        canvas.toBlob(async (blob) => {
-            const file = new File([blob], 'nuestra-carta.jpg', { type: 'image/jpeg' });
-            
-            // Intenta compartir nativamente si el dispositivo lo soporta (móviles)
-            if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-                try {
-                    await navigator.share({
-                        files: [file],
-                        title: 'Nuestra Carta de Amor',
-                        text: '❤️ ¡Mira la carta que acabo de leer!'
-                    });
-                } catch (err) {
-                    console.log('Error compartiendo o usuario canceló. Forzando descarga.', err);
-                    descargarImagen(blob); // Fallback si falla el share nativo
-                }
-            } else {
-                // Si está en PC, descargamos la imagen automáticamente
-                descargarImagen(blob);
-            }
-            els.btnShare.innerHTML = originalText;
-        }, 'image/jpeg', 0.95);
-    } catch (e) {
-        console.error("Error al capturar: ", e);
-        els.btnShare.innerHTML = originalText;
-        alert("Lo siento, hubo un error al generar la captura.");
-    }
 }
 
 // Music toggle
@@ -488,9 +428,6 @@ function toggleMusic() {
         if (typeof ytPlayer !== 'undefined' && ytPlayer.playVideo) {
             ytPlayer.setVolume(50);
             ytPlayer.playVideo();
-        } else {
-            // Fallback si YouTube no cargó a tiempo
-            playSimpleMelody();
         }
         els.btnMusic.classList.add('playing');
         els.btnMusic.querySelector('.btn-label').textContent = 'Pausar';
@@ -513,38 +450,6 @@ function onYouTubeIframeAPIReady() {
             'playsinline': 1
         }
     });
-}
-
-function playSimpleMelody() {
-    try {
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const notes = [523.25, 587.33, 659.25, 698.46, 783.99, 659.25, 523.25];
-        const durations = [0.4, 0.4, 0.4, 0.4, 0.6, 0.4, 0.8];
-
-        let startTime = audioCtx.currentTime;
-
-        notes.forEach((freq, i) => {
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-
-            osc.type = 'sine';
-            osc.frequency.value = freq;
-
-            gain.gain.setValueAtTime(0, startTime);
-            gain.gain.linearRampToValueAtTime(0.1, startTime + 0.05);
-            gain.gain.exponentialRampToValueAtTime(0.001, startTime + durations[i]);
-
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-
-            osc.start(startTime);
-            osc.stop(startTime + durations[i]);
-
-            startTime += durations[i];
-        });
-    } catch (e) {
-        // Silently fail
-    }
 }
 
 // Heart Burst
